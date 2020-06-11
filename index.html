@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script> -->
+    <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.js"></script>
+    <title>Document</title>
+    <style>
+        .btn {
+            color: white;
+        }
+
+        .ip {
+            width: 400px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+
+    </div>
+    <script type="text/babel">
+
+        class RandomGame extends React.Component {
+            constructor(props) {
+                super(props);
+                this.state = {
+                    numberOfGuessing: 0,
+                    currentGuessing: 0,
+                    randomNumber: 0,
+                    message: '',
+                    status: 1
+                }
+            }
+
+            componentDidMount() {
+                this.setState({
+                    randomNumber: this.random()
+                }, () => console.log(this.state.randomNumber));
+            }
+
+            random = () => {
+                return Math.floor(Math.random() * 100) + 1
+            }
+
+            onChange = (e) => {
+                this.setState({
+                    [e.target.name]: e.target.value
+                }, () => console.log(this.state))
+            }
+
+            guessing = () => {
+                let { currentGuessing, randomNumber, message, number, numberOfGuessing } = this.state;
+                numberOfGuessing = numberOfGuessing + 1;
+                this.setState({
+                    numberOfGuessing
+                });
+                if (numberOfGuessing >= 5) {
+                    alert(`Bạn đã thua cuộc ! `);
+                }
+                if (number > randomNumber) {
+                    message = "Your guessing is bigger";
+                }
+                else if (number < randomNumber) {
+                    message = "Your guessing is smaller";
+                }
+                else if (number == randomNumber) {
+                    alert("Bạn đã chiến thắng !!!");
+                    this.setState({
+                        randomNumber: this.random(),
+                        numberOfGuessing: 0,
+                        number: ''
+                    })
+                }
+                if (!number) {
+                    alert("Bạn chưa nhập dữ liệu !!");
+                    return;
+                }
+                this.setState({
+                    message
+                })
+            }
+
+            onReset = () => {
+                let { currentGuessing, randomNumber, message, number, numberOfGuessing } = this.state;
+                this.setState({
+                    randomNumber: this.random(),
+                    message: '',
+                    numberOfGuessing: 0,
+                    number: ''
+                })
+            }
+            onResult = () => {
+                alert(`Đáp án là: ${this.state.randomNumber}`);
+                this.setState({
+                    randomNumber: this.random(),
+                    message: '',
+                    numberOfGuessing: 0,
+                    number: ''
+                })
+            }
+
+
+            render() {
+                let { numberOfGuessing, currentGuessing, randomNumber, message, number,stauts } = this.state;
+                return (
+                    <div>
+                        <div className="jumbotron text-center">
+                            <h1>Getting Random Number</h1>
+                            <p>Tôi đã random số từ 1 - 100, bạn có đoán được không?</p>
+                        </div>
+                        <div className="text-center">
+                            <button type="button" className="btn btn-primary" onClick={this.onResult} disabled={numberOfGuessing < 5}>Xem đáp án</button>
+                            <button type="button" className="btn btn-danger my-4" onClick={this.onReset}>New Game</button>
+                            <hr></hr>
+                            <h3>Số lần bạn đã đoán là: {numberOfGuessing}</h3>
+                            <h4>Số bạn đoán là: {number}</h4>
+                            <input type="text" value={number || ''} className="ip" onChange={this.onChange} name="number" />
+                            <button type="button" className="btn btn-info" disabled={numberOfGuessing >= 5} onClick={this.guessing}>Đoán</button>
+                            <p>{message}</p>
+                        </div>
+                    </div>
+                );
+            }
+        }
+
+        ReactDOM.render(<RandomGame />, document.getElementById("app"));
+    </script>
+</body>
+
+</html>
